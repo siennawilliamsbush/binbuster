@@ -1,21 +1,21 @@
 # trigger for when the recycle bin overlaps with general waste
 def on_on_overlap(sprite2, otherSprite2):
-    # destroy the general waste sprite using a disintegrate visual effect over 100ms
+# destroy the general waste sprite using a disintegrate visual effect over 100ms
     otherSprite2.destroy(effects.disintegrate, 100)
-    # play a negative sound effect to indicate penalty 
+# play a negative sound effect to indicate penalty 
     music.knock.play()
-    # subtract 1 from the player's life count
+# subtract 1 from the player's life count
     info.change_life_by(-1)
 # register when the recycle bin hits the general waste
 sprites.on_overlap(SpriteKind.player, SpriteKind.enemy, on_on_overlap)
 
 # trigger for when the recycle bin overlaps with a recyclable sprite
 def on_on_overlap2(sprite, otherSprite):
-    # destroy the binned recyclable using a spray visual effect over 100ms
+# destroy the binned recyclable using a spray visual effect over 100ms
     otherSprite.destroy(effects.spray, 100)
-    # play a positive sound effect indicating a successful disposal
+# play a positive sound effect indicating a successful disposal
     music.ba_ding.play()
-    # increase the player's score by 1 point
+# increase the player's score by 1 point
     info.change_score_by(1)
 # register when the recycle bin hits the recyclable sprites
 sprites.on_overlap(SpriteKind.player, SpriteKind.projectile, on_on_overlap2)
@@ -136,7 +136,7 @@ def on_update_interval():
         randint(-50, 50),
         randint(-50, 50))
     
-    # change the general waste sprite to be an enemy so it penalises the player if it collides with the recycle bin 
+# change the general waste sprite to be an enemy so it penalises the player if it collides with the recycle bin 
     general_waste.set_kind(SpriteKind.enemy)
 
 # register the timer interval to trigger the spawning function every 5000 milliseconds

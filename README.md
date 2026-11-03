@@ -1,145 +1,142 @@
-# variable for when recycling sprite hits a wall tile
-
-def on_hit_wall(sprite3, location):
-    # check if the tile hit is the specific tile asset 'tile3'
-    if tiles.tile_at_location_equals(location, assets.tile("""
-        tile3
-        """)):
-        # take 1 life from the player's life count
-        info.change_life_by(-1)
-        # destroy the recycling sprite on collision
-        sprite3.destroy()
-scene.on_hit_wall(SpriteKind.Projectile2, on_hit_wall)
-
-# variable for when a standard recycling sprite touches player basket
-# register the binning event between regular projectiles and the player
-
+# trigger for when the recycle bin overlaps with general waste
 def on_on_overlap(sprite2, otherSprite2):
-    # increase the player's score by 1
-    info.set_score(info.score() + 1)
-    # destroy the binned projectile sprite
-    sprite2.destroy()
-sprites.on_overlap(SpriteKind.projectile, SpriteKind.player, on_on_overlap)
+    # destroy the general waste sprite using a disintegrate visual effect over 100ms
+    otherSprite2.destroy(effects.disintegrate, 100)
+    # play a negative sound effect to indicate penalty 
+    music.knock.play()
+    # subtract 1 from the player's life count
+    info.change_life_by(-1)
+# register when the recycle bin hits the general waste
+sprites.on_overlap(SpriteKind.player, SpriteKind.enemy, on_on_overlap)
 
-def on_hit_wall2(sprite4, location2):
-    if tiles.tile_at_location_equals(location2, assets.tile("""
-        tile3
-        """)):
-        info.change_life_by(-1)
-        sprite4.destroy()
-scene.on_hit_wall(SpriteKind.projectile, on_hit_wall2)
-
+# trigger for when the recycle bin overlaps with a recyclable sprite
 def on_on_overlap2(sprite, otherSprite):
-    global falling
-    falling = sprites.create(img("""
-            . . . . . . . .
-            . e e e e e e .
-            . e 4 4 4 4 e .
-            . e 4 4 4 4 e .
-            . e 4 4 4 4 e .
-            . e 4 4 4 4 e .
-            . e e e e e e .
-            . . . . . . . .
-            """),
-        SpriteKind.projectile)
-    falling.set_bounce_on_wall(True)
-    falling.set_position(sprite.x, sprite.y - 5)
-    falling.set_velocity(sprite.vx, 0 - sprite.vy)
-    falling.ay = sprite.ay
-    sprite.destroy()
-sprites.on_overlap(SpriteKind.Projectile2, SpriteKind.player, on_on_overlap2)
+    # destroy the binned recyclable using a spray visual effect over 100ms
+    otherSprite.destroy(effects.spray, 100)
+    # play a positive sound effect indicating a successful disposal
+    music.ba_ding.play()
+    # increase the player's score by 1 point
+    info.change_score_by(1)
+# register when the recycle bin hits the recyclable sprites
+sprites.on_overlap(SpriteKind.player, SpriteKind.projectile, on_on_overlap2)
 
-limit = 0
-falling: Sprite = None
-@namespace
-class SpriteKind:
-    # define 'Projectile2' as a unique sprite category
-    Projectile2 = SpriteKind.create()
-    # define 'snake' as a unique sprite category
-    snake = SpriteKind.create()
-s4Dir = 1
-info.set_life(3)
-basket = sprites.create(img("""
-        . . . . . . . . . . . . . . . .
-        . . . . . . . . . . . . . . . .
-        . . . . . . . . . . . . . . . .
-        . . . . . . . . . . . . . . . .
-        . . . . . . . . . . . . . . . .
-        . . 7 7 7 7 7 7 7 7 7 7 7 . . .
-        . . 7 1 7 1 7 1 7 1 7 1 7 . . .
-        . . 7 1 7 1 7 1 7 1 7 1 7 . . .
-        . . 7 1 7 1 7 1 7 1 7 1 7 . . .
-        . . 7 1 7 1 7 1 7 1 7 1 7 . . .
-        . . 7 1 7 1 7 1 7 1 7 1 7 . . .
-        . . 7 1 7 1 7 1 7 1 7 1 7 . . .
-        . . 7 1 7 1 7 1 7 1 7 1 7 . . .
-        . . 7 1 7 1 7 1 7 1 7 1 7 . . .
-        . . 7 7 7 7 7 7 7 7 7 7 7 . . .
-        . . . . . . . . . . . . . . . .
-        """),
-    SpriteKind.player)
-basket.set_position(80, 100)
-controller.move_sprite(basket, 160, 0)
-mySprite4 = sprites.create(img("""
-        . . . . . . . . . . . . . . . .
-        . 8 8 8 8 8 8 8 1 1 1 1 1 . . .
-        8 8 8 8 8 8 8 8 1 1 1 1 1 1 . .
-        8 8 8 8 8 8 8 8 1 1 1 1 1 1 . .
-        8 8 8 8 8 8 8 8 1 1 1 1 1 1 . .
-        8 8 8 8 8 1 8 8 1 1 1 1 1 1 . .
-        8 8 8 8 8 1 1 8 1 1 1 1 1 1 . .
-        8 8 8 8 8 1 1 1 1 1 1 1 1 1 . .
-        8 8 8 8 8 1 1 1 1 1 1 1 1 1 . .
-        8 8 8 8 8 1 1 8 1 1 1 1 1 1 . .
-        8 8 8 8 8 1 8 8 1 1 1 1 1 1 . .
-        8 8 8 8 8 8 8 8 1 1 1 1 1 1 . .
-        8 8 8 8 8 8 8 8 1 1 1 1 1 1 . .
-        . 8 8 8 8 8 8 8 1 1 1 1 1 . . .
-        . . . 8 8 8 . . . . . . . . . .
-        . . . . . . . . . . . . . . . .
-        """),
-    SpriteKind.snake)
-mySprite4.set_flag(SpriteFlag.GHOST, True)
-mySprite4.set_position(-7, 100)
-tiles.set_tilemap(tilemap("""
-    level
+# assign global variables to reference different waste item sprites
+general_waste: Sprite = None
+plastic: Sprite = None
+paper: Sprite = None
+glass: Sprite = None
+
+# set the background image of the game scene to a drawing of the earth
+scene.set_background_image(assets.image("""
+    background
     """))
 
-def on_update_interval():
-    global s4Dir
-    mySprite4.vx = 10 * s4Dir
-    s4Dir = s4Dir * -1
-game.on_update_interval(2200, on_update_interval)
+# create the recycle bin image and set its kind to player
+recycle_bin = sprites.create(assets.image("""
+    hero
+    """), SpriteKind.player)
 
-def on_update_interval2():
-    global falling, limit
-    if info.score() < 10 or randint(1, min(50, info.score())) < 10:
-        falling = sprites.create(img("""
-                . . . 8 8 . . .
-                . . . 9 9 . . .
-                . . 9 9 9 9 . .
-                . . 6 6 6 6 . .
-                . . 6 6 6 6 . .
-                . 9 9 9 9 9 9 .
-                . 9 9 9 9 9 9 .
-                . . 9 9 9 9 . .
-                """),
-            SpriteKind.projectile)
-    else:
-        falling = sprites.create(img("""
-                . . . . . . . .
-                . e e e e e e .
-                . e 4 4 4 4 e .
-                . e 4 4 4 4 e .
-                . e 4 4 4 4 e .
-                . e 4 4 4 4 e .
-                . e e e e e e .
-                . . . . . . . .
-                """),
-            SpriteKind.Projectile2)
-    falling.set_position(randint(20, 140), 20)
-    limit = min(10, info.score())
-    falling.set_velocity(randint(-100, 100), randint(0 - limit, 5))
-    falling.ay = 20
-    falling.set_bounce_on_wall(True)
-game.on_update_interval(2000, on_update_interval2)
+# enable controller movement for the recycle bin sprite
+controller.move_sprite(recycle_bin)
+
+# restrict the recycle bin so it cannot move past the screen boundaries
+recycle_bin.set_stay_in_screen(True)
+
+# define a recurring timer that runs every 5 seconds to spawn items
+def on_update_interval():
+    # allow modifications to waste items inside this function
+    global glass, paper, plastic, general_waste
+    
+    # create a glass sprite coming from the sides with randomised velocities
+    glass = sprites.create_projectile_from_side(img("""
+            . . . . . . . . . . . . . . . .
+            . . . . . . . 6 6 . . . . . . .
+            . . . . . . . 7 7 . . . . . . .
+            . . . . . . . 7 7 . . . . . . .
+            . . . . . . . 7 7 . . . . . . .
+            . . . . . . 7 7 7 7 . . . . . .
+            . . . . . 7 7 7 7 7 7 . . . . .
+            . . . . . 7 7 7 7 7 7 . . . . .
+            . . . . . 7 7 1 1 7 7 . . . . .
+            . . . . . 7 1 7 7 1 7 . . . . .
+            . . . . . 7 1 7 7 7 7 . . . . .
+            . . . . . 7 1 7 1 1 7 . . . . .
+            . . . . . 7 7 1 1 7 7 . . . . .
+            . . . . . 7 7 7 7 7 7 . . . . .
+            . . . . . 7 7 7 7 7 7 . . . . .
+            . . . . . 7 7 7 7 7 7 . . . . .
+            """),
+        randint(-50, 50),
+        randint(-50, 50))
+    
+    # create a paper sprite coming from the sides with randomised velocities
+    paper = sprites.create_projectile_from_side(img("""
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . 4 4 4 4 4 4 4 . . . . . . .
+            . . 4 f f f f f 4 . . . . . . .
+            . . 4 4 4 4 4 4 4 . . . . . . .
+            . . 4 f f d d d d d d . . . . .
+            . . 4 4 4 d f f f f d . . . . .
+            . . 4 f f d f d d f d . . . . .
+            . . 4 4 4 d f f f f d . . . . .
+            . . 4 f f d f d d d d . . . . .
+            . . 4 4 4 d f d d d d . . . . .
+            . . . . . d f d d d d . . . . .
+            . . . . . d d d d d d . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            """),
+        randint(-50, 50),
+        randint(-50, 50))
+    
+    # create a plastic sprite coming from the sides with randomised velocities
+    plastic = sprites.create_projectile_from_side(img("""
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . 8 8 . . . . . . .
+            . . . . . . . 9 9 . . . . . . .
+            . . . . . . . 9 9 . . . . . . .
+            . . . . . . 9 9 9 9 . . . . . .
+            . . . . . 9 9 9 9 9 9 . . . . .
+            . . . . . 8 8 8 8 8 8 . . . . .
+            . . . . . 8 8 8 8 8 8 . . . . .
+            . . . . . 8 8 8 8 8 8 . . . . .
+            . . . . . 9 9 9 9 9 9 . . . . .
+            . . . . . 9 9 9 9 9 9 . . . . .
+            . . . . . 9 9 9 9 9 9 . . . . .
+            . . . . . . 9 9 9 9 . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            """),
+        randint(-50, 50),
+        randint(-50, 50))
+    
+    # create a general waste sprite coming from the sides with randomised velocities
+    general_waste = sprites.create_projectile_from_side(img("""
+            . . . . . . . . . . . . . . . .
+            . . . . 2 2 2 2 . 2 2 2 2 . . .
+            . . . . 2 f f 2 2 2 f f 2 . . .
+            . . . . 2 2 f f f f f 2 2 . . .
+            . . . . . . 2 2 2 2 2 2 . . . .
+            . . . . 2 f f f f f f f 2 . . .
+            . . . 2 f f 2 f f f 2 f f 2 . .
+            . . . 2 f f f 2 f 2 f f f 2 . .
+            . . . 2 f f f f 2 f f f f 2 . .
+            . . . 2 f f f 2 f 2 f f f 2 . .
+            . . . 2 f f 2 f f f 2 f f 2 . .
+            . . . . 2 f f f f f f f 2 . . .
+            . . . . . 2 2 2 2 2 2 2 . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            """),
+        randint(-50, 50),
+        randint(-50, 50))
+    
+    # change the general waste sprite to be an enemy so it penalises the player if it collides with the recycle bin 
+    general_waste.set_kind(SpriteKind.enemy)
+
+# register the timer interval to trigger the spawning function every 5000 milliseconds
+game.on_update_interval(5000, on_update_interval)

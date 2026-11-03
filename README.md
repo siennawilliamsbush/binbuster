@@ -44,10 +44,11 @@ recycle_bin.set_stay_in_screen(True)
 
 # define a recurring timer that runs every 5 seconds to spawn items
 def on_update_interval():
-    # allow modifications to waste items inside this function
+
+# allow modifications to waste items inside this function
     global glass, paper, plastic, general_waste
     
-    # create a glass sprite coming from the sides with randomised velocities
+# create a glass sprite coming from the sides with randomised velocities
     glass = sprites.create_projectile_from_side(img("""
             . . . . . . . . . . . . . . . .
             . . . . . . . 6 6 . . . . . . .
@@ -69,7 +70,7 @@ def on_update_interval():
         randint(-50, 50),
         randint(-50, 50))
     
-    # create a paper sprite coming from the sides with randomised velocities
+# create a paper sprite coming from the sides with randomised velocities
     paper = sprites.create_projectile_from_side(img("""
             . . . . . . . . . . . . . . . .
             . . . . . . . . . . . . . . . .
@@ -91,7 +92,7 @@ def on_update_interval():
         randint(-50, 50),
         randint(-50, 50))
     
-    # create a plastic sprite coming from the sides with randomised velocities
+# create a plastic sprite coming from the sides with randomised velocities
     plastic = sprites.create_projectile_from_side(img("""
             . . . . . . . . . . . . . . . .
             . . . . . . . . . . . . . . . .
@@ -113,7 +114,7 @@ def on_update_interval():
         randint(-50, 50),
         randint(-50, 50))
     
-    # create a general waste sprite coming from the sides with randomised velocities
+# create a general waste sprite coming from the sides with randomised velocities
     general_waste = sprites.create_projectile_from_side(img("""
             . . . . . . . . . . . . . . . .
             . . . . 2 2 2 2 . 2 2 2 2 . . .
